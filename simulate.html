@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Simulate Traffic — AI-WAF{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Simulate traffic</h1>
+    <p>Fire a request through the live WAF engine — it's extracted, classified by Layer 1 &amp; 2, logged, and alerted on, exactly like real traffic.</p>
+  </div>
+</div>
+
+<div class="sim-grid">
+  <button class="sim-card" data-kind="normal"><h3>Normal request</h3><p>GET /products?category=shoes&amp;sort=price</p></button>
+  <button class="sim-card" data-kind="sqli"><h3>SQL Injection</h3><p>' OR 1=1 -- UNION SELECT * FROM users</p></button>
+  <button class="sim-card" data-kind="xss"><h3>Cross-Site Scripting</h3><p>&lt;script&gt;document.cookie&lt;/script&gt;</p></button>
+  <button class="sim-card" data-kind="ddos"><h3>DDoS burst</h3><p>40 rapid requests from one source in a burst</p></button>
+  <button class="sim-card" data-kind="bruteforce"><h3>Brute Force</h3><p>8 rapid failed logins to /login</p></button>
+  <button class="sim-card" data-kind="bot"><h3>Bot traffic</h3><p>Automated client, low user-agent entropy</p></button>
+</div>
+
+<div id="result" class="sim-result" style="display:none;"></div>
+
+<script>
+document.querySelectorAll('.sim-card').forEach(card => {
+  card.addEventListener('click', async () => {
+    const kind = card.dataset.kind;
+    const resultBox = document.getElementById('result');
+    resultBox.style.display = 'block';
+    resultBox.textContent = 'Sending request through the WAF engine...';
+    try {
+      const res = await fetch('/api/simulate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ kind })
+      });
+      const data = await res.json();
+      resultBox.textContent =
+`layer1_result:     ${data.layer1_result} (confidence ${data.layer1_confidence})
+layer2_result:      ${data.layer2_result || '—'}${data.layer2_confidence ? ' (confidence ' + data.layer2_confidence + ')' : ''}
+status:             ${data.status}
+severity:           ${data.severity || '—'}
+message:            ${data.message}`;
+    } catch (e) {
+      resultBox.textContent = 'Error: ' + e;
+    }
+  });
+});
+</script>
+{% endblock %}

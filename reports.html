@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Reports — AI-WAF{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Reports</h1>
+    <p>Summary of traffic and attack statistics.</p>
+  </div>
+</div>
+
+<div class="panel">
+  <div class="panel-head">Requests by classification</div>
+  <div class="chart-wrap">
+    {% if chart_b64 %}
+      <img class="chart" src="data:image/png;base64,{{ chart_b64 }}" alt="Requests by classification chart">
+    {% else %}
+      <div class="empty">No data yet — try <a href="{{ url_for('simulate_page') }}">Simulate traffic</a>.</div>
+    {% endif %}
+  </div>
+</div>
+
+<div class="panel">
+  <div class="panel-head">Breakdown by type and outcome</div>
+  <div class="panel-body">
+    {% if data %}
+    <table>
+      <thead><tr><th>Attack type</th><th>Outcome</th><th>Count</th></tr></thead>
+      <tbody>
+        {% for row in data %}
+        <tr>
+          <td>{{ row.attack_type }}</td>
+          <td><span class="badge badge-{{ row.status }}">{{ row.status }}</span></td>
+          <td>{{ row.c }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty">No data yet.</div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

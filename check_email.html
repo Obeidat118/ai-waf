@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Verify your email — AI-WAF</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <style>
+    /* تنسيق خاص لخاناعات الـ OTP الستة لتتطابق تماماً مع تصميم الموقع */
+    .otp-container {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        margin: 20px 0;
+    }
+    .otp-input {
+        width: 45px;
+        height: 50px;
+        font-size: 22px;
+        font-weight: bold;
+        text-align: center;
+        background: var(--bg, #0d1117);
+        border: 1px solid var(--border, #30363d);
+        border-radius: 6px;
+        color: var(--text, #f0f6fc);
+        outline: none;
+        transition: border-color 0.2s;
+    }
+    .otp-input:focus {
+        border-color: var(--accent, #58a6ff);
+        box-shadow: 0 0 0 2px rgba(88, 166, 255, 0.2);
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-wrap">
+    <div class="auth-card" style="width:440px;">
+      <a href="{{ url_for('landing') }}" class="brand"><span class="dot"></span>AI-WAF</a>
+      <h1>{{ 'Code expired' if expired else 'Enter Verification Code' }}</h1>
+      <p class="sub">
+        {% if expired %}
+          Your previous verification code has expired. Request a new one below.
+        {% else %}
+          We sent a 6-digit verification code to <strong style="color:var(--text)">{{ email }}</strong>. Enter it below to activate your account.
+        {% endif %}
+      </p>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="flash flash-error" style="margin-bottom: 15px;">{{ message }}</div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      {% if mail_result and mail_result.dev_mode %}
+        <div class="flash" style="background:rgba(79,176,255,0.12); color:var(--accent); border:1px solid rgba(79,176,255,0.3);">
+          <strong>Dev mode — no SMTP configured.</strong><br>
+          Your verification code is: <span style="font-size: 18px; font-weight: bold; color: #35e0a1;">{{ mail_result.otp }}</span>
+        </div>
+      {% elif mail_result and mail_result.error %}
+        <div class="flash flash-error">
+          Couldn't send the email ({{ mail_result.error }}). Check your terminal for the dev code.
+        </div>
+      {% elif mail_result and mail_result.sent %}
+        <div class="flash flash-success">Email sent — check your inbox (and spam folder).</div>
+      {% endif %}
+
+      <!-- نموذج إدخال الـ OTP -->
+      <form method="post" action="{{ url_for('verify_otp') }}" id="otpForm" style="margin-top:20px;">
+        <input type="hidden" name="email" value="{{ email }}">
+        <input type="hidden" name="otp_code" id="fullOtp">
+        
+        <div class="otp-container">
+            <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" required autocomplete="one-time-code">
+            <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
+            <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
+            <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
+            <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
+            <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
+        </div>
+
+        <button class="btn btn-primary" type="submit" style="width:100%; justify-content:center; margin-bottom: 10px;">Verify Account</button>
+      </form>
+
+      <!-- نموذج إعادة إرسال الرمز -->
+      <form method="post" action="{{ url_for('resend_verification') }}">
+        <input type="hidden" name="email" value="{{ email }}">
+        <button class="btn btn-outline" type="submit" style="width:100%; justify-content:center;">Resend verification code</button>
+      </form>
+
+      <div class="auth-foot">Already verified? <a href="{{ url_for('login') }}">Sign in</a></div>
+    </div>
+  </div>
+
+  <script>
+    const inputs = document.querySelectorAll('.otp-input');
+    const fullOtpInput = document.getElementById('fullOtp');
+    const form = document.getElementById('otpForm');
+
+    inputs.forEach((input, index) => {
+        input.addEventListener('input', (e) => {
+            const value = e.target.value;
+            if (value && index < inputs.length - 1) {
+                inputs[index + 1].focus();
+            }
+            updateFullOtp();
+        });
+
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Backspace' && !input.value && index > 0) {
+                inputs[index - 1].focus();
+            }
+        });
+    });
+
+    function updateFullOtp() {
+        let code = '';
+        inputs.forEach(input => code += input.value);
+        fullOtpInput.value = code;
+    }
+
+    form.addEventListener('submit', (e) => {
+        updateFullOtp();
+        if (fullOtpInput.value.length < 6) {
+            e.preventDefault();
+            alert('Please enter all 6 digits of the verification code.');
+        }
+    });
+  </script>
+</body>
+</html>

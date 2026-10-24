@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI-WAF — Machine-learning Web Application Firewall</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <div class="hero">
+    <div class="hero-eyebrow">Graduation Project — AI-Powered WAF</div>
+    <h1>A firewall that <span class="hl">learns</span> what an attack looks like.</h1>
+    <p class="lede">
+      AI-WAF inspects every request in two stages — first flagging anything abnormal,
+      then classifying exactly what it is (SQL Injection, XSS, DDoS, Brute Force, Bot) —
+      and gives you the logs, alerts, and reports to prove it.
+    </p>
+    <div class="hero-actions">
+      <a href="{{ url_for('register') }}" class="btn btn-primary">Protect your app — Sign up</a>
+      <a href="{{ url_for('login') }}" class="btn btn-outline">Sign in</a>
+    </div>
+    <div class="traffic-strip">
+      <span><span class="tag-allow">ALLOW</span> GET /products?category=shoes</span>
+      <span><span class="tag-block">BLOCK</span> GET /search?q=' OR 1=1 --</span>
+      <span><span class="tag-block">BLOCK</span> POST /comment &lt;script&gt;document.cookie&lt;/script&gt;</span>
+      <span><span class="tag-allow">ALLOW</span> GET /cart</span>
+    </div>
+  </div>
+
+  <div class="feature-grid">
+    <div class="feature-card">
+      <div class="num">01 — Layer One</div>
+      <h3>Normal vs. Malicious</h3>
+      <p>A Random Forest classifier screens every request in real time, tuned for speed over the 2-second budget.</p>
+    </div>
+    <div class="feature-card">
+      <div class="num">02 — Layer Two</div>
+      <h3>Attack-type classification</h3>
+      <p>Flagged traffic goes to a one-vs-rest SVM that names the attack: SQLi, XSS, DDoS, Brute Force, or Bot.</p>
+    </div>
+    <div class="feature-card">
+      <div class="num">03 — Dashboard</div>
+      <h3>Logs, alerts, reports</h3>
+      <p>Every decision is written to the database and surfaced live, with severity-ranked alerts and summary reports.</p>
+    </div>
+  </div>
+</body>
+</html>
