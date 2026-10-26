@@ -3,7 +3,7 @@ train_model.py
 ---------------
 Trains the two-layer ML pipeline described in Section 6.3 of the report:
 
-  Layer 1  (binary):  Normal vs Malicious      -> RandomForestClassifier
+  Layer 1  (binary):  Normal vs Malicious     -> RandomForestClassifier
   Layer 2  (multi):   attack-type classifier   -> SVM (one-vs-rest)
 
 Both layers are Scikit-learn Pipelines that bundle preprocessing
@@ -12,7 +12,7 @@ in Section 6.3.3, so the same transform is applied at train and
 prediction time. Each pipeline is serialized with joblib.
 
 Run:
-    python ml/train_model.py
+    python train_model.py
 Produces:
     ml/layer1_pipeline.joblib
     ml/layer2_pipeline.joblib
@@ -33,8 +33,9 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.svm import SVC
 
-BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DATA_PATH = os.path.join(BASE, "data", "traffic_dataset.csv")
+BASE = os.path.dirname(os.path.abspath(__file__))
+# تعديل مسار الملف ليقرا مباشرة من المجلد الرئيسي للمشروع Root
+DATA_PATH = os.path.join(BASE, "traffic_dataset.csv")
 
 NUMERIC_FEATURES = [
     "url_length", "num_special_chars", "num_params", "has_sql_keyword",
@@ -56,8 +57,8 @@ def build_preprocessor():
 
 def main():
     if not os.path.exists(DATA_PATH):
-        print("Dataset not found, generating it first...")
-        os.system(f"{sys.executable} {os.path.join(BASE, 'data', 'generate_dataset.py')}")
+        print("Dataset not found!")
+        sys.exit(1)
 
     df = pd.read_csv(DATA_PATH)
     metrics = {}
