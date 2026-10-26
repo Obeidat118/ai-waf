@@ -34,7 +34,7 @@ from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.svm import SVC
 
 BASE = os.path.dirname(os.path.abspath(__file__))
-# تعديل مسار الملف ليقرا مباشرة من المجلد الرئيسي للمشروع Root
+# مسار ملف الداتا في المجلد الرئيسي Root
 DATA_PATH = os.path.join(BASE, "traffic_dataset.csv")
 
 NUMERIC_FEATURES = [
@@ -60,6 +60,10 @@ def main():
         print("Dataset not found!")
         sys.exit(1)
 
+    # إنشاء مجلد ml تلقائياً إذا لم يكن موجوداً على السيرفر لتجنب أخطاء الحفظ
+    ml_dir = os.path.join(BASE, "ml")
+    os.makedirs(ml_dir, exist_ok=True)
+
     df = pd.read_csv(DATA_PATH)
     metrics = {}
 
@@ -83,7 +87,7 @@ def main():
         "f1_macro": round(f1_score(y1_test, y1_pred, average="macro"), 4),
         "report": classification_report(y1_test, y1_pred, target_names=["Normal", "Malicious"], output_dict=True),
     }
-    joblib.dump(layer1_pipeline, os.path.join(BASE, "ml", "layer1_pipeline.joblib"))
+    joblib.dump(layer1_pipeline, os.path.join(ml_dir, "layer1_pipeline.joblib"))
 
     # ---------- Layer 2: Attack-type classifier (SVM, one-vs-rest) ----------
     mal_df = df[df["is_malicious"] == 1]
@@ -104,9 +108,9 @@ def main():
         "f1_macro": round(f1_score(y2_test, y2_pred, average="macro"), 4),
         "report": classification_report(y2_test, y2_pred, output_dict=True),
     }
-    joblib.dump(layer2_pipeline, os.path.join(BASE, "ml", "layer2_pipeline.joblib"))
+    joblib.dump(layer2_pipeline, os.path.join(ml_dir, "layer2_pipeline.joblib"))
 
-    with open(os.path.join(BASE, "ml", "metrics.json"), "w") as f:
+    with open(os.path.join(ml_dir, "metrics.json"), "w") as f:
         json.dump(metrics, f, indent=2)
 
     print("Layer 1 (Normal vs Malicious) accuracy:", metrics["layer1"]["accuracy"])
