@@ -1,4 +1,4 @@
-ن"""
+"""
 app.py
 -------
 Flask backend + dashboard supporting 6-digit OTP verification flow.
