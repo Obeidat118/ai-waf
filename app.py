@@ -20,8 +20,8 @@ import database as db
 from mailer import send_verification_email
 from waf_engine import get_engine
 
-# تعديل هنا ليقرأ الـ templates من المجلد الحالي (Root) مباشرة حيث توجد الملفات
-app = Flask(__name__, template_folder='.')
+# تم ضبط مسار الـ templates والـ static على المجلد الحالي (Root) مباشرة
+app = Flask(__name__, template_folder='.', static_folder='.')
 app.secret_key = os.environ.get("AIWAF_SECRET_KEY", "dev-secret-change-me")
 
 db.init_db()
