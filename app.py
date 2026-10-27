@@ -1,4 +1,4 @@
-"""
+ن"""
 app.py
 -------
 Flask backend + dashboard supporting 6-digit OTP verification flow.
@@ -20,8 +20,8 @@ import database as db
 from mailer import send_verification_email
 from waf_engine import get_engine
 
-# تم ضبط مسار الـ templates والـ static على المجلد الحالي (Root) مباشرة
-app = Flask(__name__, template_folder='.', static_folder='.')
+# الإعداد القياسي الصحيح ليعمل الـ templates والـ static تلقائياً
+app = Flask(__name__)
 app.secret_key = os.environ.get("AIWAF_SECRET_KEY", "dev-secret-change-me")
 
 db.init_db()
