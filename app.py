@@ -20,7 +20,8 @@ import database as db
 from mailer import send_verification_email
 from waf_engine import get_engine
 
-app = Flask(__name__)
+# تعديل هنا ليقرأ الـ templates من المجلد الحالي (Root) مباشرة حيث توجد الملفات
+app = Flask(__name__, template_folder='.')
 app.secret_key = os.environ.get("AIWAF_SECRET_KEY", "dev-secret-change-me")
 
 db.init_db()
@@ -211,8 +212,10 @@ SAMPLE_REQUESTS = {
     "bruteforce": lambda ip: {"method": "POST", "url": "/login", "source_ip": ip, "is_failed_login": True},
     "bot": lambda ip: {"method": "GET", "url": "/products", "source_ip": ip, "user_agent": "curl/7.1", "packet_size": 200, "flow_duration_ms": 20},
 }
-SIM_IP_PREFIX = {"normal": "192.168.1.", "sqli": "10.0.0.", "xss": "10.0.0.",
-                 "ddos": "172.16.0.", "bruteforce": "10.10.0.", "bot": "203.0.113."}
+SIM_IP_PREFIX = {
+    "normal": "192.168.1.", "sqli": "10.0.0.", "xss": "10.0.0.",
+    "ddos": "172.16.0.", "bruteforce": "10.10.0.", "bot": "203.0.113."
+}
 
 
 @app.route("/simulate")
@@ -243,7 +246,6 @@ def api_simulate():
     return jsonify(result)
 
 
-    if __name__ == "__main__":
-         import os
-         port = int(os.environ.get("PORT", 5000))
-         app.run(host="0.0.0.0", port=port)
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
