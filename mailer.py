@@ -8,8 +8,10 @@ import requests
 # Brevo API Configuration
 BREVO_API_KEY = "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"
 BREVO_URL = "https://api.brevo.com/v3/smtp/email"
-SENDER_EMAIL = "yazanobeidat76@gmail.com"
-SENDER_NAME = "AI-WAF"
+
+# تم تعديل إيميل المرسل ليكون متوافقاً تماماً مع سياسات بريفو للإرسال البرمجي
+SENDER_EMAIL = "no-reply@ai-waf.com"  # أو تقدر تستخدم الإيميل الموثق عندك إذا فضلت
+SENDER_NAME = "AI-WAF Security"
 
 DEV_MODE = False
 
