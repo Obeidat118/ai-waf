@@ -6,7 +6,7 @@ Sends the 6-digit OTP verification code required for account activation using Br
 import requests
 
 # Brevo API Configuration
-BREVO_API_KEY = "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"
+BREVO_API_KEY = "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"
 BREVO_URL = "https://api.brevo.com/v3/smtp/email"
 SENDER_EMAIL = "yazanobeidat76@gmail.com"
 SENDER_NAME = "AI-WAF"
