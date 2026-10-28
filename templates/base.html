@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}AI-WAF{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <div class="topbar">
+    <div style="display:flex; align-items:center; gap:36px;">
+      <a href="{{ url_for('dashboard') }}" class="brand"><span class="dot"></span>AI-WAF</a>
+      <div class="topnav">
+        <a href="{{ url_for('dashboard') }}" class="{{ 'active' if request.endpoint=='dashboard' }}">Overview</a>
+        <a href="{{ url_for('logs') }}" class="{{ 'active' if request.endpoint=='logs' }}">Live Traffic</a>
+        <a href="{{ url_for('alerts') }}" class="{{ 'active' if request.endpoint=='alerts' }}">Alerts</a>
+        <a href="{{ url_for('reports') }}" class="{{ 'active' if request.endpoint=='reports' }}">Reports</a>
+        <a href="{{ url_for('simulate_page') }}" class="{{ 'active' if request.endpoint=='simulate_page' }}">Simulate Traffic</a>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <span>{{ session.get('email','') }}</span>
+      <a href="{{ url_for('logout') }}">Sign out</a>
+    </div>
+  </div>
+  <div class="shell">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash flash-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </div>
+</body>
+</html>

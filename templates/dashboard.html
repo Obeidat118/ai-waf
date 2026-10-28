@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Overview — AI-WAF{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Overview</h1>
+    <p>{{ company.name }} · {{ company.website_url }}</p>
+  </div>
+  <a href="{{ url_for('simulate_page') }}" class="btn btn-primary">Simulate traffic</a>
+</div>
+
+<div class="stat-grid">
+  <div class="stat-card">
+    <div class="label">Total requests</div>
+    <div class="value">{{ stats.total_requests }}</div>
+  </div>
+  <div class="stat-card alert">
+    <div class="label">Blocked attacks</div>
+    <div class="value">{{ stats.blocked_attacks }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="label">Alerts raised</div>
+    <div class="value">{{ stats.alerts }}</div>
+  </div>
+  <div class="stat-card signal">
+    <div class="label">Clean traffic</div>
+    <div class="value">{{ stats.by_type.get('Normal', 0) }}</div>
+  </div>
+</div>
+
+<div class="panel">
+  <div class="panel-head">Traffic by classification</div>
+  <div class="panel-body">
+    {% if stats.by_type %}
+    <table>
+      <thead><tr><th>Type</th><th>Requests</th></tr></thead>
+      <tbody>
+        {% for type, count in stats.by_type.items() %}
+        <tr><td>{{ type }}</td><td>{{ count }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty">No traffic yet — try Simulate traffic to generate some.</div>
+    {% endif %}
+  </div>
+</div>
+
+<div class="panel">
+  <div class="panel-head">Recent alerts <a href="{{ url_for('alerts') }}" style="font-weight:400; font-size:12.5px;">View all →</a></div>
+  <div class="panel-body">
+    {% if recent_alerts %}
+    <table>
+      <thead><tr><th>Time</th><th>Attack type</th><th>Severity</th><th>Message</th></tr></thead>
+      <tbody>
+        {% for a in recent_alerts %}
+        <tr>
+          <td>{{ a.created_at[:19] }}</td>
+          <td>{{ a.attack_type }}</td>
+          <td><span class="badge badge-{{ a.severity }}">{{ a.severity }}</span></td>
+          <td style="font-family:var(--sans); color:var(--text-dim);">{{ a.message }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty">No alerts yet.</div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

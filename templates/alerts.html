@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Alerts — AI-WAF{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Alerts</h1>
+    <p>Raised whenever a request is classified as malicious.</p>
+  </div>
+</div>
+
+<div class="panel">
+  <div class="panel-body">
+    {% if alerts %}
+    <table>
+      <thead><tr><th>Time</th><th>Attack type</th><th>Severity</th><th>Message</th></tr></thead>
+      <tbody>
+        {% for a in alerts %}
+        <tr>
+          <td>{{ a.created_at[:19] }}</td>
+          <td>{{ a.attack_type }}</td>
+          <td><span class="badge badge-{{ a.severity }}">{{ a.severity }}</span></td>
+          <td style="font-family:var(--sans); color:var(--text-dim);">{{ a.message }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty">No alerts yet.</div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
