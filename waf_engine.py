@@ -17,8 +17,8 @@ from collections import defaultdict, deque
 import joblib
 
 BASE = os.path.dirname(os.path.abspath(__file__))
-LAYER1_PATH = os.path.join(BASE, "ml", "layer1_pipeline.joblib")
-LAYER2_PATH = os.path.join(BASE, "ml", "layer2_pipeline.joblib")
+LAYER1_PATH = os.path.join(BASE, "layer1_pipeline.joblib")
+LAYER2_PATH = os.path.join(BASE, "layer2_pipeline.joblib")
 
 SQL_PATTERN = re.compile(r"(select|union|drop|insert|--|or 1=1|sleep\(|information_schema)", re.I)
 SCRIPT_PATTERN = re.compile(r"(<script>|onerror=|javascript:|<img\s+src=|document\.cookie)", re.I)
